@@ -132,17 +132,6 @@ def create_tables(database) -> bool:
         print('Se ha creado todas las tablas con éxito.')
         return True
 
-# def create_tables(db, name_table, fields_type_table):
-#     try:
-#         field_type: list = [f'{key} {value}' for key, value in fields_type_table]
-#         statement: str = f'CREATE TABLE IF NOT EXISTS {name_table} ( {','.join  (field_type)} );'
-#         db.cursor().execute(statement)          
-#     except:
-#         print(f'Se ha producido un error al crear la tabla {name_table}')
-#     else:
-#         db.commit()
-#         print(f'Se ha creado la tabla {name_table} con éxito.')
-
 def insert_careers(database, table_name: str, careers: list[str]) -> bool:
     try:
         data_careers: list[tuple[int, str]] = [(id + 1, career) for id, career in enumerate(careers)]
@@ -340,30 +329,3 @@ def main() -> bool:
 
 if __name__ == '__main__':
     main()
-
-"""
-with open('../data/raw/csv/ASIGNACIONES_2020.csv', 'r') as dataset:
-    carreras: set = set()
-    planteles: set = set()
-    oferta: dict = dict()
-    fields: list = list()
-    for line in dataset:
-        println = line.split(';')
-        for ln in println:
-            fields.append(ln.strip().upper())
-        break
-    for line in dataset:
-        println:list = line.split(';')
-        carrera: str = println[-2].strip().upper()
-        plantel: str = println[-1].strip().upper()
-        #Identificar oferta académica
-        if plantel not in planteles:
-            oferta[plantel]:list = list()
-        else:
-            if carrera not in oferta[plantel]:
-                oferta[plantel].append(carrera)
-        # Identificar las carreras
-        carreras.add(carrera)
-        # Identificar los planteles
-        planteles.add(plantel)
-"""

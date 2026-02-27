@@ -1,9 +1,15 @@
 # Por protección de datos
 
+# Ignorar ejemplos ficticios
+
+!data/raw/samples/
+
+# Ignorar todos los .db y .log en data/db/
+
 data/db/**/*.db
 data/db/**/*.log
 
-# Por protección de datos
+# Ignorar todos los .csv/.pdf./.txt en data/raw/
 
 data/raw/**/*.csv
 data/raw/**/*.pdf
