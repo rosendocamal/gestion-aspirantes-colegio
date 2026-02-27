@@ -1,0 +1,10 @@
+# Por protección de datos
+
+data/db/**/*.db
+data/db/**/*.log
+
+# Por protección de datos
+
+data/raw/**/*.csv
+data/raw/**/*.pdf
+data/raw/**/*.txt
