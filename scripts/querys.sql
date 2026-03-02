@@ -26,7 +26,7 @@ ON CARRERAS.id = OFERTA.id_carrera
     INNER JOIN asignaciones ASIGNACION
     ON OFERTA.id = ASIGNACION.id_oferta_asignada
 GROUP BY CARRERAS.carrera
-ORDER BY ALUMNOS desc
+ORDER BY NUM_ALUMNOS desc
 LIMIT 1;
 
 /* Diversidad académica:
@@ -88,26 +88,98 @@ FROM aspirantes;
     ¿Cuál es el porcentaje de hombres y mujeres asignados?
 */
 
-/* Filtros complejos:
-    ¿Cuántos alumnos con el apellido más numeroso fueron asignados a carreras técnicas?
-*/
+SELECT
+    SUBSTR(curp, 11, 1) AS SEXO,
+    COUNT(*) AS NUM_ALUMNOS
+FROM aspirantes
+GROUP BY SEXO;
 
 /* Filtros complejos:
     ¿Cuántos alumnos hay por cada letra inicial del apellido?
 */
 
+SELECT 
+    SUBSTR(curp, 1, 1) AS LETRA_INICIAL,
+    COUNT(*) AS NUM_ALUMNOS
+FROM aspirantes
+GROUP BY LETRA_INICIAL;
+
 /* Detección de errores:
     ¿Hay alguna CURP que no tenga los 18 caracteres reglamentarios?
 */
+
+-- Verificar existencia de CURPs con tamaño distinto al oficial
+
+SELECT
+    LENGTH(curp) AS TAMANO_CURP
+FROM aspirantes
+WHERE TAMANO_CURP != 18;
+
+-- Contar existencias de CURPs por tamaños
+
+SELECT
+    LENGTH(curp) AS TAMANO_CURP,
+    COUNT(*) AS NUM_CURP,
+FROM aspirantes
+GROUP BY TAMANO_CURP;
+
+-- Visualizar dichas CURPS con tamaño no oficial: Query 1
+
+SELECT 
+    curp AS CURP_INVALIDA
+FROM aspirantes
+WHERE LENGTH(curp) != 18;
+
+-- Visualizar dichas CURPs con tamaño no oficial: Query 2
+
+SELECT
+    curp AS CURP_INVALIDA,
+    LENGTH(curp) AS CURP_TAMANO
+FROM aspirantes
+WHERE CURP_TAMANO != 18;
 
 /* Cruce de datos:
     ¿Cuál es la carrera más saturada del plantel con menos alumnos totales?
 */
 
+-- Obtenemos el plantel con menos alumnos
+
+SELECT
+    PLANTEL.plantel AS SEDE,
+    COUNT(ASIGNACION.folio) AS NUM_ALUMNOS
+FROM planteles PLANTEL
+INNER JOIN oferta_academica OFERTA
+ON PLANTEL.id = OFERTA.id_plantel
+    LEFT JOIN asignaciones ASIGNACION
+    ON OFERTA.id = ASIGNACION.id_oferta_asignada
+GROUP BY PLANTEL.plantel
+ORDER BY NUM_ALUMNOS asc
+LIMIT 1;
+
+-- Con la query anterior buscamos la cantidad de alumnos por carrera y por plantel y filtramos con el dato obtenido anteriormente
+
+SELECT
+    PLANTEL.plantel AS SEDE,
+    CARRERA.carrera AS ESTUDIO,
+    COUNT(ASIGNACION.folio) AS NUM_ALUMNOS
+FROM planteles PLANTEL
+INNER JOIN oferta_academica OFERTA
+ON PLANTEL.id = OFERTA.id_plantel
+    LEFT JOIN asignaciones ASIGNACION
+    ON OFERTA.id = ASIGNACION.id_oferta_asignada
+        LEFT JOIN carreras CARRERA
+        ON CARRERA.id = OFERTA.id_carrera
+WHERE PLANTEL.plantel = 'LEONA VICARIO'
+GROUP BY SEDE, ESTUDIO
+ORDER BY NUM_ALUMNOS DESC
+LIMIT 1;
+
+
 /* Distribución por Estado:
     ¿Cuántos alumnos vienen de un estado diferente al de la sede del plantel?
 */
 
-/* Ranking:
-    "Top 3" de las carreras por cada plantel.
-*/
+SELECT
+    COUNT(curp) AS ESTUDIANTES_OTROS_ESTADOS
+FROM aspirantes
+WHERE SUBSTR(curp, 12, 2) != 'QR';
